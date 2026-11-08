@@ -68,8 +68,8 @@
 <body class="min-h-screen flex flex-col font-sans antialiased selection:bg-blue-500 selection:text-white">
 
     <!-- 頂部大盤指數與狀態列 -->
-    <header class="sticky top-0 z-30 glass-card border-b border-slate-800 px-4 py-3">
-        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+    <header class="sticky top-0 z-30 glass-card border-b border-slate-800 px-4 xl:px-8 py-3">
+        <div class="w-full mx-auto flex flex-wrap items-center justify-between gap-4">
             <!-- Logo 與標題 -->
             <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
@@ -112,21 +112,21 @@
                     <i class="fa-solid fa-bolt" id="autoRefreshIcon"></i>
                     <span id="autoRefreshLabel">自動更新: 開啟 (15s)</span>
                 </button>
-                <button onclick="refreshQuotes(true)" id="refreshBtn" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium flex items-center space-x-1.5 transition border border-slate-700">
-                    <i class="fa-solid fa-rotate" id="refreshIcon"></i>
+                <button onclick="refreshQuotes(true)" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-medium flex items-center space-x-1.5 transition">
+                    <i class="fa-solid fa-arrows-rotate" id="refreshIcon"></i>
                     <span>立即同步</span>
                 </button>
                 <button onclick="openApiModal()" class="px-3 py-2 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 text-xs font-medium flex items-center space-x-1.5 transition">
-                    <i class="fa-solid fa-plug"></i>
-                    <span class="hidden sm:inline">資料源設定</span>
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>資料源設定</span>
                 </button>
             </div>
         </div>
     </header>
 
     <!-- 導覽分頁列 -->
-    <div class="border-b border-slate-800 bg-slate-900/50 px-4">
-        <div class="max-w-7xl mx-auto flex space-x-1 overflow-x-auto py-2">
+    <div class="border-b border-slate-800 bg-slate-900/50 px-4 xl:px-8">
+        <div class="w-full mx-auto flex space-x-1 overflow-x-auto py-2">
             <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white shadow-sm whitespace-nowrap flex items-center space-x-2 transition">
                 <i class="fa-solid fa-grip"></i>
                 <span>自選監控與技術面</span>
@@ -141,16 +141,30 @@
             </button>
             <button onclick="switchTab('guide')" id="tab-guide" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/30 whitespace-nowrap flex items-center space-x-2 transition ml-auto">
                 <i class="fa-solid fa-book-open"></i>
-                <span>完整設定與部署教學 (含 GAS / Python 程式碼)</span>
+                <span>完整設定與部署教學</span>
             </button>
         </div>
     </div>
 
-    <!-- 主內容區 -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
+    <!-- 主內容區 (自動調整全螢幕滿版寬度) -->
+    <main class="flex-1 w-full mx-auto px-4 xl:px-8 py-5 space-y-5">
 
         <!-- ==================== 分頁 1：自選監控與技術面 ==================== -->
-        <section id="view-dashboard" class="space-y-6">
+        <section id="view-dashboard" class="space-y-5">
+            <!-- 美股大盤與台股高度連動科技巨頭即時看板 -->
+            <div class="glass-card rounded-2xl p-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-bold">US Market</span>
+                        <h2 class="text-sm font-bold text-white">美股四大指數與台股連動權值指標 (TSM / NVDA / AAPL)</h2>
+                    </div>
+                    <span class="text-[11px] text-slate-400">台股開盤前先行指標 · 隨報價同步更新</span>
+                </div>
+                <div id="usMarketGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                    <!-- 由 JS 動態渲染美股指標 -->
+                </div>
+            </div>
+
             <!-- 搜尋與新增自選股控制列 -->
             <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4">
                 <div class="flex flex-wrap items-center gap-2 flex-1 min-w-[260px]">
@@ -176,32 +190,79 @@
                 </div>
             </div>
 
-            <!-- 自選股卡片網格 -->
-            <div id="watchlistGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- 自選股卡片網格 (滿版自動擴展至 4 欄) -->
+            <div id="watchlistGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 <!-- 由 JS 動態渲染 -->
             </div>
 
-            <!-- 下方圖表與個股深度分析面板 -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- 左側 2/3：互動技術走勢與法人買賣超 -->
-                <div class="lg:col-span-2 glass-card rounded-2xl p-5 flex flex-col justify-between">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-800">
+            <!-- 下方圖表與個股深度分析面板 (滿版 12 欄配置) -->
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-5">
+                <!-- 左側 8/12：個股 30 天內股價漲跌走勢與逐日明細 -->
+                <div class="xl:col-span-8 glass-card rounded-2xl p-5 flex flex-col justify-between space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
                         <div class="flex items-center space-x-3">
                             <span id="chartStockBadge" class="px-2.5 py-1 rounded-lg bg-blue-500/20 text-blue-300 font-mono font-bold text-sm">2330</span>
-                            <h2 id="chartStockTitle" class="text-lg font-bold text-white">台積電 近 20 日收盤與均線走勢</h2>
+                            <h2 id="chartStockTitle" class="text-lg font-bold text-white">台積電 近 30 日股價漲跌與均線走勢</h2>
                         </div>
-                        <div class="flex items-center space-x-2 text-xs">
-                            <span class="flex items-center space-x-1 text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span><span>收盤價</span></span>
-                            <span class="flex items-center space-x-1 text-slate-300 ml-2"><span class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span><span>5日均線 (MA5)</span></span>
+                        <!-- 視圖切換：走勢圖 vs 30日漲跌明細表 -->
+                        <div class="flex items-center space-x-2">
+                            <div class="bg-slate-900 p-1 rounded-xl border border-slate-800 flex space-x-1 text-xs">
+                                <button onclick="toggle30DayView('chart')" id="btn30dChart" class="px-3 py-1 rounded-lg bg-blue-600 text-white font-medium transition">
+                                    <i class="fa-solid fa-chart-area mr-1"></i>走勢圖
+                                </button>
+                                <button onclick="toggle30DayView('table')" id="btn30dTable" class="px-3 py-1 rounded-lg text-slate-400 hover:text-white transition">
+                                    <i class="fa-solid fa-table-list mr-1"></i>30日逐日漲跌表
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="relative w-full h-72">
+
+                    <!-- 30 天關鍵統計指標列 -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                        <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">
+                            <span class="text-slate-400">30日累計漲跌</span>
+                            <span id="stat30dChange" class="font-mono font-bold text-sm text-twRed">+0.00 (+0.00%)</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">
+                            <span class="text-slate-400">30日最高價</span>
+                            <span id="stat30dHigh" class="font-mono font-bold text-sm text-white">--</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">
+                            <span class="text-slate-400">30日最低價</span>
+                            <span id="stat30dLow" class="font-mono font-bold text-sm text-white">--</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">
+                            <span class="text-slate-400">上漲 / 下跌天數</span>
+                            <span id="stat30dWinDays" class="font-mono font-bold text-sm text-amber-400">-- 漲 / -- 跌</span>
+                        </div>
+                    </div>
+
+                    <!-- 視圖 A：30 日 Chart.js 走勢圖 -->
+                    <div id="panel30dChart" class="relative w-full h-80">
                         <canvas id="stockChart"></canvas>
+                    </div>
+
+                    <!-- 視圖 B：30 日逐日股價漲跌明細表 -->
+                    <div id="panel30dTable" class="hidden max-h-80 overflow-y-auto rounded-xl border border-slate-800 bg-slate-900/60">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead class="sticky top-0 bg-slate-900 border-b border-slate-800 text-slate-400">
+                                <tr>
+                                    <th class="py-2.5 px-4">交易日期</th>
+                                    <th class="py-2.5 px-4 text-right">收盤價 (元)</th>
+                                    <th class="py-2.5 px-4 text-right">單日漲跌</th>
+                                    <th class="py-2.5 px-4 text-right">單日漲跌幅</th>
+                                    <th class="py-2.5 px-4 text-right">5日均線 (MA5)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table30dBody" class="divide-y divide-slate-800/60 font-mono">
+                                <!-- 由 JS 動態產生 30 天逐日漲跌紀錄 -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
-                <!-- 右側 1/3：選中個股基本面、籌碼面與個人筆記 -->
-                <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-4">
+                <!-- 右側 4/12：選中個股基本面、籌碼面與個人筆記 -->
+                <div class="xl:col-span-4 glass-card rounded-2xl p-5 flex flex-col justify-between space-y-4">
                     <div>
                         <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
                             <h3 class="font-bold text-white flex items-center space-x-2">
@@ -454,6 +515,22 @@
                             <li>等待約 1～2 分鐘重新整理頁面，上方就會出現您的專屬網址：<br><code class="text-amber-300 font-mono">https://您的帳號.github.io/twse-hub/</code></li>
                         </ul>
                     </div>
+                </div>
+
+                <!-- 新增：如何更新已部署的 GitHub 網頁與設定 -->
+                <div class="p-4 rounded-xl bg-indigo-950/30 border border-indigo-500/30 space-y-2">
+                    <div class="font-bold text-indigo-300 text-sm flex items-center space-x-2">
+                        <i class="fa-solid fa-rotate"></i>
+                        <span>3. 日後如何將新版程式碼更新到 GitHub？（30 秒完成更新）</span>
+                    </div>
+                    <ol class="list-decimal list-inside space-y-1.5 text-xs leading-relaxed text-slate-300">
+                        <li>複製右側編輯器中最新的完整 <code class="px-1.5 py-0.5 rounded bg-slate-800 text-emerald-300">index.html</code> 程式碼。</li>
+                        <li>進入您的 GitHub 儲存庫（例如 <code class="text-slate-400">twse-hub</code>），在檔案列表中直接點擊 <code class="px-1.5 py-0.5 rounded bg-slate-800 text-emerald-300">index.html</code>。</li>
+                        <li>點擊檔案視窗右上角的「<strong>鉛筆圖示 (<i class="fa-solid fa-pen"></i> Edit this file)</strong>」。</li>
+                        <li>按 <kbd class="px-1.5 py-0.5 bg-slate-800 rounded">Ctrl + A</kbd> 全選舊程式碼並刪除，再按 <kbd class="px-1.5 py-0.5 bg-slate-800 rounded">Ctrl + V</kbd> 貼上最新程式碼。</li>
+                        <li>點擊右上角綠色按鈕「<strong>Commit changes...</strong>」→ 在彈出視窗再點一次「<strong>Commit changes</strong>」。</li>
+                        <li>等待約 <strong>30～60 秒</strong>，前往您的 GitHub Pages 網址並按 <kbd class="px-1.5 py-0.5 bg-slate-800 rounded">Ctrl + F5</kbd>（強制重新整理快取），即可看到最新滿版與美股、30日漲跌介面！</li>
+                    </ol>
                 </div>
             </div>
 
@@ -760,15 +837,25 @@ print("Successfully generated stocks.json")</pre>
     </div>
 
     <!-- 頁尾 -->
-    <footer class="border-t border-slate-800/80 py-4 px-4 text-center text-xs text-slate-500 mt-8">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+    <footer class="border-t border-slate-800/80 py-4 px-4 xl:px-8 text-center text-xs text-slate-500 mt-8">
+        <div class="w-full mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
             <span>台股個人戰情室 (Single-File Serverless Architecture) · 資料儲存於瀏覽器 LocalStorage</span>
             <span>台股配色慣例：<span class="text-twRed font-semibold">▲ 紅漲</span> / <span class="text-twGreen font-semibold">▼ 綠跌</span></span>
         </div>
     </footer>
 
     <script>
-        // ==================== 預設台股標的與基本面資料庫 ====================
+        // ==================== 美股四大指數與台股連動科技權值股預設資料 ====================
+        let usMarkets = [
+            { symbol: '^SOX', name: '費城半導體', price: 5240.5, change: 68.2, changePercent: 1.32 },
+            { symbol: '^IXIC', name: '那斯達克', price: 18420.8, change: 115.4, changePercent: 0.63 },
+            { symbol: '^GSPC', name: 'S&P 500', price: 5810.2, change: 24.5, changePercent: 0.42 },
+            { symbol: 'TSM', name: '台積電 ADR', price: 192.45, change: 4.15, changePercent: 2.20 },
+            { symbol: 'NVDA', name: '輝達 NVIDIA', price: 138.60, change: 3.20, changePercent: 2.36 },
+            { symbol: 'AAPL', name: '蘋果 Apple', price: 231.30, change: -0.85, changePercent: -0.37 }
+        ];
+
+        // ==================== 預設台股標的與基本面資料庫 (含 30 日歷史資料) ====================
         const DEFAULT_STOCKS = [
             {
                 code: '2330', name: '台積電', category: 'TECH',
@@ -776,7 +863,7 @@ print("Successfully generated stocks.json")</pre>
                 pe: '24.6x', yieldRate: 1.65, annualDiv: 17.5,
                 foreign5d: '+38,420 張', trust5d: '+4,150 張',
                 shares: 1000, avgCost: 920.0,
-                history: [1010, 1020, 1015, 1030, 1045, 1040, 1055, 1050, 1045, 1060, 1070, 1055, 1040, 1050, 1065, 1060, 1050, 1045, 1045, 1065]
+                history: [975, 980, 972, 985, 990, 995, 1005, 1000, 1010, 1015, 1010, 1020, 1015, 1030, 1045, 1040, 1055, 1050, 1045, 1060, 1070, 1055, 1040, 1050, 1065, 1060, 1050, 1045, 1045, 1065]
             },
             {
                 code: '2317', name: '鴻海', category: 'TECH',
@@ -784,7 +871,7 @@ print("Successfully generated stocks.json")</pre>
                 pe: '16.2x', yieldRate: 2.80, annualDiv: 6.0,
                 foreign5d: '+22,190 張', trust5d: '+3,800 張',
                 shares: 2000, avgCost: 185.0,
-                history: [198, 200, 202, 201, 205, 208, 206, 209, 211, 210, 208, 207, 210, 212, 211, 209, 210, 211, 211, 214.5]
+                history: [186, 188, 187, 190, 192, 191, 194, 196, 195, 197, 198, 200, 202, 201, 205, 208, 206, 209, 211, 210, 208, 207, 210, 212, 211, 209, 210, 211, 211, 214.5]
             },
             {
                 code: '2454', name: '聯發科', category: 'TECH',
@@ -792,7 +879,7 @@ print("Successfully generated stocks.json")</pre>
                 pe: '19.8x', yieldRate: 4.18, annualDiv: 55.0,
                 foreign5d: '-1,420 張', trust5d: '+890 張',
                 shares: 0, avgCost: 0,
-                history: [1280, 1295, 1310, 1305, 1320, 1340, 1335, 1350, 1345, 1330, 1325, 1340, 1335, 1330, 1320, 1325, 1335, 1330, 1330, 1315]
+                history: [1220, 1235, 1230, 1245, 1250, 1260, 1255, 1270, 1265, 1275, 1280, 1295, 1310, 1305, 1320, 1340, 1335, 1350, 1345, 1330, 1325, 1340, 1335, 1330, 1320, 1325, 1335, 1330, 1330, 1315]
             },
             {
                 code: '0050', name: '元大台灣50', category: 'ETF',
@@ -800,7 +887,7 @@ print("Successfully generated stocks.json")</pre>
                 pe: '-', yieldRate: 2.57, annualDiv: 5.0,
                 foreign5d: '+6,210 張', trust5d: '+1,200 張',
                 shares: 2000, avgCost: 168.5,
-                history: [185.5, 186.2, 187.0, 188.5, 189.0, 188.2, 190.1, 191.0, 190.5, 191.8, 192.5, 191.0, 190.8, 191.5, 192.0, 192.8, 191.5, 192.1, 192.1, 194.2]
+                history: [180.2, 181.0, 180.5, 182.0, 183.1, 182.8, 184.0, 184.5, 185.0, 185.2, 185.5, 186.2, 187.0, 188.5, 189.0, 188.2, 190.1, 191.0, 190.5, 191.8, 192.5, 191.0, 190.8, 191.5, 192.0, 192.8, 191.5, 192.1, 192.1, 194.2]
             },
             {
                 code: '00919', name: '群益台灣精選高息', category: 'ETF',
@@ -808,7 +895,7 @@ print("Successfully generated stocks.json")</pre>
                 pe: '-', yieldRate: 11.48, annualDiv: 2.72,
                 foreign5d: '-8,500 張', trust5d: '+12,400 張',
                 shares: 10000, avgCost: 22.4,
-                history: [23.1, 23.2, 23.15, 23.3, 23.4, 23.35, 23.5, 23.48, 23.42, 23.55, 23.6, 23.5, 23.45, 23.52, 23.58, 23.6, 23.55, 23.56, 23.56, 23.68]
+                history: [22.6, 22.65, 22.7, 22.68, 22.75, 22.8, 22.85, 22.9, 22.95, 23.0, 23.1, 23.2, 23.15, 23.3, 23.4, 23.35, 23.5, 23.48, 23.42, 23.55, 23.6, 23.5, 23.45, 23.52, 23.58, 23.6, 23.55, 23.56, 23.56, 23.68]
             },
             {
                 code: '00878', name: '國泰永續高股息', category: 'ETF',
@@ -816,7 +903,7 @@ print("Successfully generated stocks.json")</pre>
                 pe: '-', yieldRate: 8.92, annualDiv: 2.04,
                 foreign5d: '+3,120 張', trust5d: '+5,600 張',
                 shares: 8000, avgCost: 20.8,
-                history: [22.5, 22.55, 22.6, 22.58, 22.7, 22.75, 22.72, 22.8, 22.85, 22.9, 22.88, 22.82, 22.78, 22.85, 22.9, 22.92, 22.88, 22.9, 22.9, 22.85]
+                history: [22.1, 22.15, 22.2, 22.18, 22.25, 22.3, 22.35, 22.4, 22.42, 22.48, 22.5, 22.55, 22.6, 22.58, 22.7, 22.75, 22.72, 22.8, 22.85, 22.9, 22.88, 22.82, 22.78, 22.85, 22.9, 22.92, 22.88, 22.9, 22.9, 22.85]
             },
             {
                 code: '2881', name: '富邦金', category: 'FIN',
@@ -824,7 +911,7 @@ print("Successfully generated stocks.json")</pre>
                 pe: '11.4x', yieldRate: 3.81, annualDiv: 3.5,
                 foreign5d: '+14,300 張', trust5d: '+2,100 張',
                 shares: 3000, avgCost: 78.5,
-                history: [88.5, 88.8, 89.2, 89.0, 89.5, 90.0, 89.8, 90.2, 90.5, 90.8, 90.4, 90.1, 90.5, 90.9, 91.2, 91.0, 90.8, 91.1, 91.1, 91.8]
+                history: [85.2, 85.5, 86.0, 85.8, 86.4, 86.9, 87.2, 87.5, 87.8, 88.1, 88.5, 88.8, 89.2, 89.0, 89.5, 90.0, 89.8, 90.2, 90.5, 90.8, 90.4, 90.1, 90.5, 90.9, 91.2, 91.0, 90.8, 91.1, 91.1, 91.8]
             }
         ];
 
@@ -859,6 +946,7 @@ print("Successfully generated stocks.json")</pre>
         window.onload = function() {
             loadLocalData();
             updateMarketStatus();
+            renderUsMarket();
             renderWatchlist();
             selectStock(selectedStockCode);
             renderPortfolio();
@@ -867,6 +955,54 @@ print("Successfully generated stocks.json")</pre>
             refreshQuotes(false);
             startAutoRefreshTimer();
         };
+
+        // 渲染美股大盤與科技巨頭看板
+        function renderUsMarket() {
+            const grid = document.getElementById('usMarketGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            usMarkets.forEach(item => {
+                const isUp = item.change >= 0;
+                const colorClass = isUp ? 'text-twRed' : 'text-twGreen';
+                const badgeClass = isUp ? 'bg-red-500/10 text-twRed border-red-500/20' : 'bg-emerald-500/10 text-twGreen border-emerald-500/20';
+                const sign = isUp ? '▲ +' : '▼ ';
+
+                const div = document.createElement('div');
+                div.className = 'p-3 rounded-xl bg-slate-900/90 border border-slate-800/90 flex flex-col justify-between';
+                div.innerHTML = `
+                    <div class="flex items-center justify-between text-xs mb-1">
+                        <span class="font-bold text-slate-200 truncate">${item.name}</span>
+                        <span class="font-mono text-[10px] text-slate-500">${item.symbol.replace('^', '')}</span>
+                    </div>
+                    <div class="flex items-baseline justify-between mt-1">
+                        <span class="font-mono font-bold text-sm sm:text-base ${colorClass}">${item.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                        <span class="font-mono text-[11px] px-1.5 py-0.5 rounded border ${badgeClass}">${sign}${item.changePercent.toFixed(2)}%</span>
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        // 切換 30 日走勢圖與 30 日逐日漲跌明細表
+        function toggle30DayView(mode) {
+            const chartPanel = document.getElementById('panel30dChart');
+            const tablePanel = document.getElementById('panel30dTable');
+            const btnChart = document.getElementById('btn30dChart');
+            const btnTable = document.getElementById('btn30dTable');
+
+            if (mode === 'table') {
+                chartPanel.classList.add('hidden');
+                tablePanel.classList.remove('hidden');
+                btnTable.className = 'px-3 py-1 rounded-lg bg-blue-600 text-white font-medium transition';
+                btnChart.className = 'px-3 py-1 rounded-lg text-slate-400 hover:text-white transition';
+            } else {
+                tablePanel.classList.add('hidden');
+                chartPanel.classList.remove('hidden');
+                btnChart.className = 'px-3 py-1 rounded-lg bg-blue-600 text-white font-medium transition';
+                btnTable.className = 'px-3 py-1 rounded-lg text-slate-400 hover:text-white transition';
+            }
+        }
 
         // 判斷目前是否為台股開盤時間 (週一至週五 09:00 ~ 13:35)
         function updateMarketStatus() {
@@ -1013,7 +1149,16 @@ print("Successfully generated stocks.json")</pre>
 
                     <div class="flex items-center justify-between text-xs text-slate-400 pt-3 mt-2 border-t border-slate-800/80">
                         <span>成交量: <strong class="font-mono text-slate-300">${stock.volume.toLocaleString()}</strong> 張</span>
-                        <span>殖利率: <strong class="font-mono text-amber-400">${stock.yieldRate}%</strong></span>
+                        <span>30日漲跌: <strong class="font-mono ${(() => {
+                            const h = stock.history || [];
+                            const diff = h.length >= 2 ? h[h.length - 1] - h[0] : 0;
+                            return diff >= 0 ? 'text-twRed' : 'text-twGreen';
+                        })()}">${(() => {
+                            const h = stock.history || [];
+                            if (h.length < 2 || !h[0]) return '0.0%';
+                            const pct = ((h[h.length - 1] - h[0]) / h[0]) * 100;
+                            return (pct >= 0 ? '+' : '') + pct.toFixed(1) + '%';
+                        })()}</strong></span>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -1029,7 +1174,7 @@ print("Successfully generated stocks.json")</pre>
             renderWatchlist();
 
             document.getElementById('chartStockBadge').textContent = stock.code;
-            document.getElementById('chartStockTitle').textContent = `${stock.name} 近 20 日收盤與均線走勢`;
+            document.getElementById('chartStockTitle').textContent = `${stock.name} 近 30 日股價漲跌與均線走勢`;
             document.getElementById('detailCode').textContent = `${stock.code}.TW`;
             document.getElementById('detailYield').textContent = `${stock.yieldRate}%`;
             document.getElementById('detailPE').textContent = stock.pe || '-';
@@ -1049,26 +1194,36 @@ print("Successfully generated stocks.json")</pre>
             fetchLiveNews(stock.code);
         }
 
-        // 透過 Yahoo Finance 抓取指定個股最近 20 個交易日真實收盤價與 K 線走勢
+        // 透過 Yahoo Finance 抓取指定個股最近 30 個交易日真實收盤價、日期與 K 線走勢
         async function fetchSingleStockHistory(code) {
             const stock = stocks.find(s => s.code === code);
             if (!stock) return;
 
-            const yfUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${code}.TW?interval=1d&range=1mo`;
+            const yfUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${code}.TW?interval=1d&range=3mo`;
             for (const makeProxy of CORS_PROXIES) {
                 try {
                     const res = await fetchWithTimeout(makeProxy(yfUrl), 5000);
                     if (!res.ok) continue;
                     const data = await res.json();
                     const result = data?.chart?.result?.[0];
+                    const timestamps = result?.timestamp;
                     const closes = result?.indicators?.quote?.[0]?.close;
                     const volumes = result?.indicators?.quote?.[0]?.volume;
                     if (Array.isArray(closes) && closes.length > 3) {
-                        const validCloses = closes.filter(v => v !== null && !isNaN(v)).map(v => +v.toFixed(2));
-                        if (validCloses.length >= 2) {
-                            stock.history = validCloses.slice(-20);
-                            const latestClose = validCloses[validCloses.length - 1];
-                            const prevClose = validCloses[validCloses.length - 2];
+                        const pairs = [];
+                        closes.forEach((c, idx) => {
+                            if (c !== null && !isNaN(c)) {
+                                const ts = Array.isArray(timestamps) && timestamps[idx] ? timestamps[idx] * 1000 : null;
+                                const dateStr = ts ? new Date(ts).toLocaleDateString('zh-TW', { month: '2-digit', day: '2-digit' }) : null;
+                                pairs.push({ close: +c.toFixed(2), date: dateStr });
+                            }
+                        });
+                        if (pairs.length >= 2) {
+                            const last30 = pairs.slice(-30);
+                            stock.history = last30.map(p => p.close);
+                            stock.historyDates = last30.map(p => p.date);
+                            const latestClose = stock.history[stock.history.length - 1];
+                            const prevClose = stock.history[stock.history.length - 2];
                             if (latestClose > 0) {
                                 stock.price = latestClose;
                                 stock.change = +(latestClose - prevClose).toFixed(2);
@@ -1097,49 +1252,92 @@ print("Successfully generated stocks.json")</pre>
 
         // 即時抓取 Google News RSS 針對該檔台股的最新新聞
         async function fetchLiveNews(code) {
-            const stock = stocks.find(s => s.code === code) || { code: '2330', name: '台積電' };
-            const tagEl = document.getElementById('newsStockTag');
             const container = document.getElementById('liveNewsContainer');
-            if (!container) return;
+            const tagEl = document.getElementById('newsStockTag');
+            const stock = stocks.find(s => s.code === code) || stocks[0];
+            if (!container || !stock) return;
 
-            if (tagEl) tagEl.textContent = `${stock.code} ${stock.name} 最新新聞`;
+            const query = `${stock.code} ${stock.name} 台股`;
+            if (tagEl) tagEl.textContent = `${stock.code} ${stock.name}`;
 
-            const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(stock.code + ' ' + stock.name + ' 台股')}&hl=zh-TW&gl=TW&ceid=TW:zh-Hant`;
-            const rss2jsonUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+            const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=zh-TW&gl=TW&ceid=TW:zh-Hant`;
 
-            try {
-                const res = await fetchWithTimeout(rss2jsonUrl, 5000);
-                const data = await res.json();
-                if (data && data.status === 'ok' && Array.isArray(data.items) && data.items.length > 0) {
-                    container.innerHTML = '';
-                    data.items.slice(0, 6).forEach(item => {
-                        const pubDate = item.pubDate ? new Date(item.pubDate.replace(/-/g, '/')).toLocaleString('zh-TW', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '剛剛';
-                        const card = document.createElement('a');
-                        card.href = item.link;
-                        card.target = '_blank';
-                        card.rel = 'noopener noreferrer';
-                        card.className = 'p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-blue-500/50 hover:bg-slate-800/80 transition flex flex-col justify-between group';
-                        card.innerHTML = `
-                            <div class="font-medium text-slate-200 group-hover:text-blue-300 line-clamp-2 leading-relaxed mb-2">${item.title}</div>
-                            <div class="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-800/70">
-                                <span><i class="fa-regular fa-clock mr-1"></i>${pubDate}</span>
-                                <span class="text-blue-400 group-hover:translate-x-0.5 transition">閱讀全文 →</span>
-                            </div>
-                        `;
-                        container.appendChild(card);
-                    });
-                    return;
+            for (const makeProxy of CORS_PROXIES) {
+                try {
+                    const res = await fetchWithTimeout(makeProxy(rssUrl), 5000);
+                    if (!res.ok) continue;
+                    const xmlText = await res.text();
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+                    const items = Array.from(xmlDoc.querySelectorAll('item')).slice(0, 6);
+
+                    if (items.length > 0) {
+                        container.innerHTML = '';
+                        items.forEach(item => {
+                            const title = item.querySelector('title')?.textContent || '台股即時新聞';
+                            const link = item.querySelector('link')?.textContent || '#';
+                            const pubDateRaw = item.querySelector('pubDate')?.textContent;
+                            const pubDate = pubDateRaw ? new Date(pubDateRaw).toLocaleString('zh-TW', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }) : '最新';
+                            const source = item.querySelector('source')?.textContent || '財經新聞';
+
+                            const a = document.createElement('a');
+                            a.href = link;
+                            a.target = '_blank';
+                            a.rel = 'noopener noreferrer';
+                            a.className = 'p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-blue-500/50 hover:bg-slate-800/60 transition flex flex-col justify-between group';
+                            a.innerHTML = `
+                                <div class="text-slate-200 font-medium group-hover:text-blue-400 transition line-clamp-2 leading-relaxed mb-2">${title}</div>
+                                <div class="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-800/70">
+                                    <span class="text-emerald-400/90 font-medium">${source}</span>
+                                    <span class="font-mono">${pubDate}</span>
+                                </div>
+                            `;
+                            container.appendChild(a);
+                        });
+                        return;
+                    }
+                } catch (e) {
+                    // 嘗試下一個 Proxy
                 }
-            } catch (e) {
-                // fallback
             }
+
+            // 若 RSS Proxy 暫時忙碌，提供一鍵前往 Google 新聞與 Yahoo 股市個股新聞的備援卡片
+            container.innerHTML = `
+                <a href="https://www.google.com/search?q=${encodeURIComponent(query)}&tbm=nws" target="_blank" rel="noopener noreferrer" class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-blue-500/50 transition flex items-center justify-between">
+                    <div>
+                        <div class="text-slate-200 font-bold mb-1">前往 Google 財經新聞查看「${stock.code} ${stock.name}」最新報導</div>
+                        <div class="text-[11px] text-slate-400">即時彙整各大財經媒體盤中與盤後焦點</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-blue-400"></i>
+                </a>
+                <a href="https://tw.stock.yahoo.com/quote/${stock.code}.TW/news" target="_blank" rel="noopener noreferrer" class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-blue-500/50 transition flex items-center justify-between">
+                    <div>
+                        <div class="text-slate-200 font-bold mb-1">前往 Yahoo 股市查看「${stock.code} ${stock.name}」個股新聞與研究報告</div>
+                        <div class="text-[11px] text-slate-400">包含外資報告、營收快訊與重大訊息</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-emerald-400"></i>
+                </a>
+                <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener noreferrer" class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-blue-500/50 transition flex items-center justify-between">
+                    <div>
+                        <div class="text-slate-200 font-bold mb-1">公開資訊觀測站「${stock.code}」重大訊息查詢</div>
+                        <div class="text-[11px] text-slate-400">官方公告、法說會簡報與股利政策</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-amber-400"></i>
+                </a>
+            `;
         }
 
-        // ==================== 繪製 Chart.js 20日收盤與 MA5 均線圖 ====================
+        // ==================== 繪製 Chart.js 30日收盤與 MA5 均線圖 + 30日逐日漲跌明細表 ====================
         function renderStockChart(stock) {
             const ctx = document.getElementById('stockChart').getContext('2d');
-            const prices = Array.isArray(stock.history) && stock.history.length > 0 ? stock.history : [stock.price];
-            const labels = prices.map((_, idx) => `D-${prices.length - 1 - idx === 0 ? '今日' : prices.length - 1 - idx}`);
+            const prices = Array.isArray(stock.history) && stock.history.length > 0 ? stock.history.slice(-30) : [stock.price];
+            const dates = Array.isArray(stock.historyDates) && stock.historyDates.length === prices.length
+                ? stock.historyDates
+                : prices.map((_, idx) => {
+                    const d = new Date();
+                    d.setDate(d.getDate() - (prices.length - 1 - idx));
+                    return `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
+                });
 
             // 計算 5 日均線 (MA5)
             const ma5 = prices.map((val, idx, arr) => {
@@ -1149,6 +1347,63 @@ print("Successfully generated stocks.json")</pre>
                 return +(sum / slice.length).toFixed(2);
             });
 
+            // 更新 30 天統計摘要與逐日表格
+            if (prices.length >= 2) {
+                const firstPrice = prices[0];
+                const lastPrice = prices[prices.length - 1];
+                const diff30 = +(lastPrice - firstPrice).toFixed(2);
+                const pct30 = firstPrice > 0 ? +((diff30 / firstPrice) * 100).toFixed(2) : 0;
+                const high30 = Math.max(...prices);
+                const low30 = Math.min(...prices);
+
+                let upDays = 0;
+                let downDays = 0;
+                for (let i = 1; i < prices.length; i++) {
+                    if (prices[i] > prices[i - 1]) upDays++;
+                    else if (prices[i] < prices[i - 1]) downDays++;
+                }
+
+                const chgEl = document.getElementById('stat30dChange');
+                if (chgEl) {
+                    const isUp = diff30 >= 0;
+                    chgEl.textContent = `${isUp ? '▲ +' : '▼ '}${diff30.toFixed(2)} (${isUp ? '+' : ''}${pct30.toFixed(2)}%)`;
+                    chgEl.className = `font-mono font-bold text-sm ${isUp ? 'text-twRed' : 'text-twGreen'}`;
+                }
+                const highEl = document.getElementById('stat30dHigh');
+                if (highEl) highEl.textContent = high30.toFixed(2);
+                const lowEl = document.getElementById('stat30dLow');
+                if (lowEl) lowEl.textContent = low30.toFixed(2);
+                const winEl = document.getElementById('stat30dWinDays');
+                if (winEl) winEl.innerHTML = `<span class="text-twRed">${upDays} 漲</span> / <span class="text-twGreen">${downDays} 跌</span>`;
+            }
+
+            // 渲染 30 日逐日漲跌明細表 (由最新日期排到最舊)
+            const tbody30 = document.getElementById('table30dBody');
+            if (tbody30) {
+                tbody30.innerHTML = '';
+                for (let i = prices.length - 1; i >= 0; i--) {
+                    const close = prices[i];
+                    const prev = i > 0 ? prices[i - 1] : close;
+                    const dayDiff = +(close - prev).toFixed(2);
+                    const dayPct = prev > 0 ? +((dayDiff / prev) * 100).toFixed(2) : 0;
+                    const isUp = dayDiff > 0;
+                    const isDown = dayDiff < 0;
+                    const cClass = isUp ? 'text-twRed' : (isDown ? 'text-twGreen' : 'text-slate-400');
+                    const sign = isUp ? '▲ +' : (isDown ? '▼ ' : '');
+
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-800/50 transition';
+                    tr.innerHTML = `
+                        <td class="py-2 px-4 text-slate-300">${dates[i]} ${i === prices.length - 1 ? '<span class="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300">最新</span>' : ''}</td>
+                        <td class="py-2 px-4 text-right font-bold text-white">${close.toFixed(2)}</td>
+                        <td class="py-2 px-4 text-right font-bold ${cClass}">${sign}${dayDiff.toFixed(2)}</td>
+                        <td class="py-2 px-4 text-right font-bold ${cClass}">${isUp ? '+' : ''}${dayPct.toFixed(2)}%</td>
+                        <td class="py-2 px-4 text-right text-amber-400">${ma5[i].toFixed(2)}</td>
+                    `;
+                    tbody30.appendChild(tr);
+                }
+            }
+
             if (chartInstance) {
                 chartInstance.destroy();
             }
@@ -1156,7 +1411,7 @@ print("Successfully generated stocks.json")</pre>
             chartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: dates,
                     datasets: [
                         {
                             label: `${stock.name} 收盤價`,
@@ -1195,7 +1450,20 @@ print("Successfully generated stocks.json")</pre>
                             titleColor: '#94a3b8',
                             bodyColor: '#f8fafc',
                             borderColor: '#334155',
-                            borderWidth: 1
+                            borderWidth: 1,
+                            callbacks: {
+                                afterBody: function(context) {
+                                    const idx = context[0].dataIndex;
+                                    if (idx > 0) {
+                                        const curr = prices[idx];
+                                        const prev = prices[idx - 1];
+                                        const d = +(curr - prev).toFixed(2);
+                                        const p = prev > 0 ? +((d / prev) * 100).toFixed(2) : 0;
+                                        return `單日漲跌: ${d >= 0 ? '+' : ''}${d} (${p >= 0 ? '+' : ''}${p}%)`;
+                                    }
+                                    return '';
+                                }
+                            }
                         }
                     },
                     scales: {
@@ -1509,9 +1777,10 @@ print("Successfully generated stocks.json")</pre>
             throw new Error('TWSE MIS 通道暫無回應');
         }
 
-        // 通道 2：透過 Yahoo Finance v7/v8 批次抓取台股真實即時報價與加權指數 (^TWII)
+        // 通道 2：透過 Yahoo Finance v7/v8 批次抓取台股真實即時報價、加權指數 (^TWII) 與美股權值指標
         async function fetchFromYahooFinance() {
-            const symbols = ['^TWII', '^TWOII', ...stocks.map(s => `${s.code}.TW`)];
+            const usSymbols = usMarkets.map(u => u.symbol);
+            const symbols = ['^TWII', '^TWOII', ...usSymbols, ...stocks.map(s => `${s.code}.TW`)];
             let updatedCount = 0;
 
             for (const makeProxy of CORS_PROXIES) {
@@ -1537,6 +1806,14 @@ print("Successfully generated stocks.json")</pre>
                                 return;
                             }
 
+                            const usItem = usMarkets.find(u => u.symbol === q.symbol);
+                            if (usItem) {
+                                usItem.price = +price.toFixed(2);
+                                usItem.change = +change.toFixed(2);
+                                usItem.changePercent = +changePct.toFixed(2);
+                                return;
+                            }
+
                             const code = q.symbol.replace('.TW', '').replace('.TWO', '');
                             const local = stocks.find(s => s.code === code);
                             if (local) {
@@ -1554,6 +1831,7 @@ print("Successfully generated stocks.json")</pre>
                                 updatedCount++;
                             }
                         });
+                        renderUsMarket();
                         if (updatedCount > 0) {
                             return { source: 'Yahoo Finance 即時行情', time: null };
                         }
@@ -1563,6 +1841,34 @@ print("Successfully generated stocks.json")</pre>
                 }
             }
             throw new Error('Yahoo Finance 批次報價失敗');
+        }
+
+        // 獨立同步美股四大指數與科技巨頭即時報價
+        async function fetchUsMarketQuotes() {
+            const usSymbols = usMarkets.map(u => u.symbol);
+            for (const makeProxy of CORS_PROXIES) {
+                try {
+                    const quoteUrl = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(usSymbols.join(','))}&_=${Date.now()}`;
+                    const res = await fetchWithTimeout(makeProxy(quoteUrl), 5000);
+                    if (!res.ok) continue;
+                    const data = await res.json();
+                    const results = data?.quoteResponse?.result;
+                    if (Array.isArray(results) && results.length > 0) {
+                        results.forEach(q => {
+                            const usItem = usMarkets.find(u => u.symbol === q.symbol);
+                            if (usItem && q.regularMarketPrice) {
+                                usItem.price = +q.regularMarketPrice.toFixed(2);
+                                usItem.change = +(q.regularMarketChange || 0).toFixed(2);
+                                usItem.changePercent = +(q.regularMarketChangePercent || 0).toFixed(2);
+                            }
+                        });
+                        renderUsMarket();
+                        return;
+                    }
+                } catch (e) {
+                    // 繼續嘗試
+                }
+            }
         }
 
         function updateIndexHeader(valId, chgId, price, change, changePct) {
@@ -1581,8 +1887,9 @@ print("Successfully generated stocks.json")</pre>
 
         async function refreshQuotes(showNotification = true) {
             const icon = document.getElementById('refreshIcon');
-            icon.classList.add('fa-spin');
+            if (icon) icon.classList.add('fa-spin');
             updateMarketStatus();
+            fetchUsMarketQuotes();
 
             const customUrl = localStorage.getItem('twse_personal_api_url');
 
@@ -1628,7 +1935,7 @@ print("Successfully generated stocks.json")</pre>
                         updateBadge('自訂 GAS 即時連線', true);
                         updateTimestamp(data.updatedAt);
                         if (showNotification) showToast('已透過自訂 API 同步最新台股真實報價！');
-                        icon.classList.remove('fa-spin');
+                        if (icon) icon.classList.remove('fa-spin');
                         return;
                     }
                 } catch (err) {
@@ -1666,7 +1973,7 @@ print("Successfully generated stocks.json")</pre>
                     if (showNotification) showToast('已更新各股最新真實收盤與走勢！');
                 }
             } finally {
-                icon.classList.remove('fa-spin');
+                if (icon) icon.classList.remove('fa-spin');
                 countdownSec = 15;
             }
         }
